@@ -21,7 +21,7 @@ namespace HomeWork7
         //Open “HyperLink” page in new tab
         //Hover on “Go to Home Page” link
         //Take a screenshot and save it somewhere
-        [Test]
+        [Test, Category("1")]
         public void Test1()
         {
             Assert.True(true);
@@ -32,7 +32,7 @@ namespace HomeWork7
         //Switch to frame
         //Drag & Drop the small box into a big one
         //Verify that big box now contains text “Dropped!”
-        [Test]
+        [Test, Category("2")]
         public void Test2()
         {
             By Droppable_link = By.LinkText("Droppable");
@@ -54,7 +54,7 @@ namespace HomeWork7
 
         }
 
-        [Test]
+        [Test, Category("2")]
         public void Test3()
         {
             Assert.True(true);
