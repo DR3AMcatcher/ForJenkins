@@ -4,12 +4,7 @@ param
 (
     [Parameter()]
     [String[]] $TaskList = @("RestorePackages", "Build", "CopyArtifacts"),
-    [String] $Configuration = "Debug",
-	[String] $Platform = "Any CPU",
-	[String] $OutputPath ="src/HomeWork7/bin/Debug",
-	[String] $Solution = "src/HomeWork7.sln"
-	
-	
+    
     # Also add following parameters: 
     #   Configuration
     #   Platform
@@ -18,6 +13,19 @@ param
     # Use /p swith to pass the parameter. For example:
     #   MSBuild.exe src/Solution.sln /p:Configuration=$Configuration
     # More info here: https://docs.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-properties?view=vs-2017
+    
+
+    [Parameter()]
+    [String] $Configuration = "Debug",
+
+    [Parameter()]
+    [String] $Platform = "Any CPU",
+
+    [Parameter()]
+    [String] $OutputPath ="src\PhpTravels.UITests\bin\Debug",
+
+    [Parameter()] 
+    [String] $Solution = "src/PhpTravels.UITests.sln",
 
     [Parameter()]
     [String] $BuildArtifactsFolder
@@ -41,15 +49,21 @@ Function RestoreNuGetPackages()
 {
     DownloadNuGet
     Write-Output 'Restoring NuGet packages...'
+
     # NuGet.exe call here
-	& $NugetExe restore $Solution
+    & $NugetExe restore $Solution
+
+    if($LASTEXITCODE -ne 0){
+        Throw "An error occured while restoring nuget packages."
+    }
 }
 
 Function BuildSolution()
 {
     Write-Output "Building '$Solution' solution..."
+
     # MSBuild.exe call here
-	& $MSBuildExe $Solution /p:Configuration=$Configuration /p:Platform=$Platform 
+    & $MSBuildExe $Solution /p:Configuration=$Configuration /p:Platform=$Platform 
      if($LASTEXITCODE -ne 0){
         Throw "An error occured while building solution."
     }
@@ -78,7 +92,13 @@ Function CopyBuildArtifacts()
     #           Get-ChildItem ... | Copy-Item ...
     #
     #           which will get items (Get-ChildItem) and will copy them (Copy-Item) to the target folder
-	New-Item -Path $DestinationFolder -ItemType "directory"
+   
+    if (Test-Path -Path $DestinationFolder)
+    {
+        Remove-Item -Path $DestinationFolder -Recurse
+    }
+
+    New-Item -Path $DestinationFolder -ItemType "directory"
 
     Copy-item -Force -Recurse -Verbose $SourceFolder -Destination $DestinationFolder
 }
